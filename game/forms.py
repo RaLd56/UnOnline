@@ -10,7 +10,7 @@ class GameRoomForm(forms.ModelForm):
         }
 
 class JoinRoomForm(forms.Form):
-    room_name = forms.CharField(max_length=10, label="Введите имя комнаты", widget=forms.TextInput(attrs={'maxlength': '10'}))
+    room_name = forms.CharField(max_length=10, label="Enter room name", widget=forms.TextInput(attrs={'maxlength': '10'}))
 
 
 '''class RoomCreationForm(forms.ModelForm):

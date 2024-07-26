@@ -7,6 +7,7 @@ urlpatterns = [
     path('create_room/', views.create_room, name='create_room'),
     path('join_room/', views.join_room, name='join_room'),
     path('game_room/<str:room_name>/', views.game_room, name='game_room'),
+    path('game/<str:room_name>/play_card/<int:card_id>/', views.play_card, name='play_card'),
 ]
 
 

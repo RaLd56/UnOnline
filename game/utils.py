@@ -1,34 +1,37 @@
-import random
-from .models import Card, GameRoom
 
 import random
-from .models import Card, GameRoom
+from .models import Card, PlayerCard
+from django.db import transaction
 
 def deal_cards(room):
-    players = list(room.players.all())
-    
+    players = room.players.all()
     all_cards = list(Card.objects.all())
-    random.shuffle(all_cards)
     
-    player_hands = {player.id: [] for player in players}  # Используйте ID пользователя в качестве ключа
+    with transaction.atomic():
+        # Очистить старые карты
+        room.player_cards.all().delete()
     
-    for player in players:
-        player_hands[player.id] = all_cards[:7]
-        all_cards = all_cards[7:]
+        while True:
+            random.shuffle(all_cards)
     
-    initial_card_found = False
-    for player_id in player_hands:
-        non_special_cards = [card for card in player_hands[player_id] if card.suit in ['R', 'G', 'B', 'Y']]
-        if non_special_cards:
-            initial_card = random.choice(non_special_cards)
-            room.last_played_card = initial_card
-            room.save()
-            player_hands[player_id].remove(initial_card)
-            initial_card_found = True
-            break
-
-    if not initial_card_found:
-        raise Exception("Не удалось найти подходящую начальную карту")
-
-    return player_hands
-
+            for player in players:
+                # Выдаем карты игрокам
+                hand_cards = all_cards[:7]
+                all_cards = all_cards[7:]
+                for card in hand_cards:
+                    PlayerCard.objects.create(player=player, card=card, room=room)
+    
+            # Найти начальную карту
+            initial_card_found = False
+            for player in players:
+                non_special_cards = room.player_cards.filter(player=player, card__suit__in=['R', 'G', 'B', 'Y'])
+                if non_special_cards.exists():
+                    initial_card = random.choice(non_special_cards).card
+                    room.last_played_card = initial_card
+                    room.save()
+                    room.player_cards.filter(player=player, card=initial_card).delete()
+                    initial_card_found = True
+                    break
+    
+            if initial_card_found:
+                break

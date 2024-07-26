@@ -57,6 +57,14 @@ class GameRoom(models.Model):
                 self.is_full = False
                 self.save()
 
+class PlayerCard(models.Model):
+    player = models.ForeignKey(User, on_delete=models.CASCADE, related_name='player_cards')
+    card = models.ForeignKey(Card, on_delete=models.CASCADE)
+    room = models.ForeignKey(GameRoom, on_delete=models.CASCADE, related_name='player_cards')
+
+    class Meta:
+        unique_together = ('player', 'card', 'room')
+
 
 
 
