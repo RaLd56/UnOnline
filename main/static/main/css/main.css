@@ -307,8 +307,8 @@ main .features{
     border: 1px solid #ddd;
     border-radius: 8px;
     padding: 10px;
-    margin: 10px;
-    width: 45%;
+    margin: 5px;
+    width: 80%;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
@@ -358,6 +358,28 @@ main .features{
     padding: 20px;
     background-color: #f8f9fa;
     border-radius: 10px;
+}
+
+.last-played-card{
+    border: none;
+    background: none;
+    margin-left: 12vh;
+    margin-top: -7vh;
+    margin-bottom: 10vh;
+    transform: scale(0.3);
+    height: 25vh
+}
+.last-played-card h1{
+    text-align: center;
+    margin-right: 40vh;
+}
+
+.player-button{
+    height: 10vh;
+    width: auto;
+}
+.player-button img{
+transform: scale(2);
 }
 
 

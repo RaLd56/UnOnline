@@ -39,6 +39,7 @@ class GameRoom(models.Model):
     players = models.ManyToManyField(User, related_name='game_rooms')
     is_full = models.BooleanField(default=False)
     last_played_card = models.ForeignKey(Card, null=True, blank=True, on_delete=models.SET_NULL)
+    turn = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='current_turn')
 
     def __str__(self):
         return self.name
@@ -64,57 +65,3 @@ class PlayerCard(models.Model):
 
     class Meta:
         unique_together = ('player', 'card', 'room')
-
-
-
-
-
-
-'''class Room(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    room_password = models.CharField(max_length=100)
-    last_played_card = models.ForeignKey('Card', null=True, blank=True, on_delete=models.SET_NULL, related_name='last_played_in_room')
-
-    def __str__(self):
-        return self.name
-
-class Player(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    room = models.ForeignKey(Room, related_name='players', on_delete=models.CASCADE)
-    hand = models.ManyToManyField('Card', related_name='held_by_players')
-
-    def __str__(self):
-        return self.user.username
-
-class Card(models.Model):
-    SUIT_CHOICES = [
-        ('R', 'Red'),
-        ('G', 'Green'),
-        ('B', 'Blue'),
-        ('Y', 'Yellow'),
-        ('S', 'Special'),
-    ]
-
-    TYPE_CHOICES = [
-        ('0', 'Zero'),
-        ('1', 'One'),
-        ('2', 'Two'),
-        ('3', 'Three'),
-        ('4', 'Four'),
-        ('5', 'Five'),
-        ('6', 'Six'),
-        ('7', 'Seven'),
-        ('8', 'Eight'),
-        ('9', 'Nine'),
-        ('D', 'Draw Two'),
-        ('S', 'Skip'),
-        ('R', 'Reverse'),
-        ('W', 'Wild'),
-        ('WD', 'Wild Draw Four'),
-    ]
-
-    suit = models.CharField(max_length=1, choices=SUIT_CHOICES)
-    type = models.CharField(max_length=2, choices=TYPE_CHOICES)
-
-    def __str__(self):
-        return f'{self.get_suit_display()} {self.get_type_display()}' '''

@@ -9,24 +9,6 @@ Room: {{ room.name }}
 <div class="container-room">
     <h1>Room: {{ room.name }}</h1>
 
-    <div class="player">
-        <h2>{{ user.username }}</h2>
-        <div class="cards">
-            {% for player_card in current_player_hand %}
-                <div class="card">
-                    <form method="POST" action="{% url 'play_card' room_name=room.name card_id=player_card.card.id %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-outline-light">
-                            <img src="{% static 'main/img/cards/'|add:player_card.card.suit|add:'_'|add:player_card.card.type|add:'.png' %}" alt="{{ player_card.card.suit }} {{ player_card.card.type }}">
-                        </button>
-                    </form>
-                </div>
-            {% empty %}
-                <h4>No cards</h4>
-            {% endfor %}
-        </div>
-    </div>
-
     <div class="players">
         {% for info in player_info %}
             <div class="player">
@@ -34,7 +16,7 @@ Room: {{ room.name }}
                 <div class="cards">
                     {% for player_card in info.cards %}
                         <div class="card">
-                            <img src="{% static 'main/img/cards/'|add:player_card.card.suit|add:'_'|add:player_card.card.type|add:'.png' %}" alt="Card">
+                            <img src="{% static 'main/img/cards/unknown_card.png' %}">
                         </div>
                     {% empty %}
                         <p>No cards</p>
@@ -44,12 +26,38 @@ Room: {{ room.name }}
         {% endfor %}
     </div>
 
+
     <div class="last-played-card">
         {% if room.last_played_card %}
             <img src="{% static 'main/img/cards/'|add:room.last_played_card.suit|add:'_'|add:room.last_played_card.type|add:'.png' %}" alt="{{ room.last_played_card.suit }} {{ room.last_played_card.type }}">
         {% else %}
-            <p>No cards played yet.</p>
+            <h1>No cards played yet.</h1>
         {% endif %}
     </div>
+
+    <div class="players">
+        <div class="player">
+        <h2>{{ user.username }}</h2>
+        <div class="cards">
+            {% for player_card in current_player_hand %}
+                <div class="card">
+                    <form method="POST" action="{% url 'play_card' room_name=room.name card_id=player_card.card.id %}">
+                        {% csrf_token %}
+                        <div class="player-button">
+                        <button type="submit" class="btn btn-outline-light">
+                            <img src="{% static 'main/img/cards/'|add:player_card.card.suit|add:'_'|add:player_card.card.type|add:'.png' %}" alt="{{ player_card.card.suit }} {{ player_card.card.type }}">
+                        </button>
+                        </div>
+                    </form>
+                </div>
+            {% empty %}
+                <h4>No cards</h4>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+    
+
 </div>
 {% endblock %}
