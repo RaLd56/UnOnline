@@ -1,0 +1,23 @@
+{% extends 'main/layout.html' %}
+
+{% block title %}
+Homepage
+{% endblock %}
+
+{% block content %}
+<div class = "features">
+    <h1>Welcome to UnOnline</h1>
+    <p>Join the Fun and Play UNO Online. Whether you're a seasoned UNO player or new to the game, UNOmania is the perfect place to enjoy this classic card game with friends, family, or players from around the globe. Our online platform offers a seamless, user-friendly experience that brings the thrill of UNO to your fingertips.</p>
+    <h3>How to get started:</h3>
+    <ul>
+        <strong>Sign Up:</strong> Create a free account to access all features and start playing.
+        <strong>Join a Game:</strong> Enter an open game or create your own room.
+        <strong>Play and Win:</strong> Follow the classic UNO rules, play your cards, and try to be the first to shout "UNO!"
+    </ul>
+    {% if user.is_authenticated %}
+    <a href="{% url 'start_game' %}" class="button">Get started</a>
+    {% else %}
+    <a href="{% url 'registration' %}" class="button">Get started</a>
+    {% endif %}
+</div>
+{% endblock %}

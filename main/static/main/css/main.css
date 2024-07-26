@@ -1,0 +1,364 @@
+body {
+    background: #F5F5F5;
+    color: #00FFFF;
+}
+
+h1 {
+    text-align: center;
+}
+
+
+aside {
+    float: left;
+    background: #212121;
+    width: 15%;
+    padding: 2.5%;
+    height: 100vh;
+    color:azure;
+    border-right: 5px solid #4d4d4d;
+}
+
+aside a{
+    text-decoration: none;
+}
+
+.resized-image {
+    width: 100%;
+    height: auto;
+    display: block; 
+  }
+
+aside ul {list-style: none}
+aside ul li{
+    color: azure;
+    display: block;
+    text-align: center;
+    text-decoration: none;
+    margin-left: -5.5vh;
+    transition: transform .2s ease;
+}
+aside ul li:hover, aside ul a:hover{
+    color: #a3e392;
+    text-decoration: none;
+    transform: scale(1.04);
+}
+
+main .features{
+    text-align: center;
+    max-width: 800px;
+    margin: auto;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.half-width {
+    width: 50%; 
+    margin: 0 auto; 
+    padding: 10px;
+    box-sizing: border-box; 
+  }
+  
+  
+  .alert {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+    color: #721c24;
+    margin-bottom: 10px;
+    padding: 15px;
+    text-align: center;
+  }
+
+  .button {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: white;
+    background-color: #a3e392;
+    border: none;
+    border-radius: 4px;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.button:hover {
+    background-color: #00b3ad;
+    transform: translateY(-2px);
+}
+.button-group {
+    flex-direction: column;
+    gap: 10px;
+}
+.registration-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    margin: auto;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.container_button {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.container_button button {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+}
+
+.container_button small {
+    display: block;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.about h1{
+    text-align: center;
+    color: #F5F5F5;
+}
+.container_about {
+    max-width: 800px;
+    margin: auto;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.media {
+    display: flex;
+    align-items: center;
+}
+
+.rounded-circle {
+    border-radius: 50%;
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    margin-right: 20px;
+}
+
+.account-img {
+    border: 5px solid #dddddd;
+    padding: 5px;
+}
+
+.media-body {
+    flex: 1;
+}
+
+.media-body h2{
+    text-align: center;
+}
+
+.container-profile {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.content-section {
+    background-color: #ffffff;
+    padding: 30px;
+    margin-left: 10vh;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border: 2px solid #eeeeee; /* Добавление рамки вокруг профиля */
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #eeeeee;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+}
+
+.rounded-circle {
+    border-radius: 50%;
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    margin-right: 20px;
+}
+
+.account-img {
+    border: 5px solid #dddddd;
+    padding: 5px;
+}
+
+.profile-info {
+    flex: 1;
+}
+
+.account-heading {
+    font-size: 2.5em;
+    margin: 0;
+    color: #333333;
+}
+
+.text-secondary {
+    color: #777777;
+    font-size: 1.2em;
+}
+
+.profile-body h3 {
+    color: #444444;
+    margin-top: 30px;
+}
+
+.profile-body p {
+    color: #555555;
+    line-height: 1.6;
+}
+
+
+@media (max-width: 600px) {
+    .content-section {
+        padding: 15px;
+        margin: 20px;
+    }
+
+    .media {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .rounded-circle {
+        margin-right: 0;
+        margin-bottom: 20px;
+    }
+
+    .account-heading {
+        font-size: 1.5em;
+    }
+}
+
+.logout {
+    text-align: center;
+}
+
+.button-group {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+}
+
+.container-start{
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+}
+
+/* styles.css */
+.container-room {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.container-room h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.container-room p{
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.players {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.player {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    margin: 10px;
+    width: 45%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.player h2 {
+    text-align: center;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.card {
+    width: 50px;
+    height: 75px;
+    margin: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card img {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.card p {
+    text-align: center;
+    color: #777;
+}
+
+
+.card-button {
+    border: none;
+    background: none;
+    padding: 0;
+    margin: 0;
+}
+.container-room {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+}
+
+
+  

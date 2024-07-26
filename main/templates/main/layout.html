@@ -1,0 +1,48 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    <script src="https://kit.fontawesome.com/2bb4419517.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css" href = "{% static 'main/css/main.css' %}">
+    <link rel="stylesheet" href = "https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"> 
+</head>
+
+<body>
+    <aside>
+        <img src = "{% static 'main/img/logo.png' %}" class="resized-image">
+        <ul>
+            <a href="{% url 'home' %}"><li><i class="fa-solid fa-house-chimney"></i>Home</li></a>
+            <a href="{% url 'about' %}"><li><i class="fa-solid fa-question"></i>About</li></a>
+            <a href=""><li><i class="fa-solid fa-address-card"></i>Contacts</li></a>
+            {% if user.is_authenticated %}
+            <a href="{% url 'start_game' %}"><li><i class="fa-solid fa-gamepad"></i>Start a game</li></a>
+            <a href="{% url 'profile' %}"><li><i class="fa-solid fa-person"></i>Profile</li></a>
+            <li><form action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-light">Logout</button>
+            </form>
+            </li>
+            {% else %}
+            <a href="{% url 'login' %}"><li><i class="fa-solid fa-key"></i>Login</li></a>
+            <a href="{% url 'registration' %}"><li><i class="fa-solid fa-user"></i>Register</li></a>
+            {% endif %}
+        </ul>
+    </aside>
+    <main>
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} half-width">
+                {{ message }}
+            </div>
+            {% endfor %}
+        {% endif %}
+        {% block content %}
+        {% endblock %}
+        
+    </main>
+    
+</body>
+</html>
