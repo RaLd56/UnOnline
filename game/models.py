@@ -63,5 +63,4 @@ class PlayerCard(models.Model):
     card = models.ForeignKey(Card, on_delete=models.CASCADE)
     room = models.ForeignKey(GameRoom, on_delete=models.CASCADE, related_name='player_cards')
 
-    class Meta:
-        unique_together = ('player', 'card', 'room')
+

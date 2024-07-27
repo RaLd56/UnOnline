@@ -12,12 +12,11 @@ class GameRoomForm(forms.ModelForm):
 class JoinRoomForm(forms.Form):
     room_name = forms.CharField(max_length=10, label="Enter room name", widget=forms.TextInput(attrs={'maxlength': '10'}))
 
-
-'''class RoomCreationForm(forms.ModelForm):
-    class Meta:
-        model = Room
-        fields = ['name', 'room_password']
-
-class JoinRoomForm(forms.Form):
-    room_name = forms.CharField(max_length=100)
-    room_password = forms.CharField(widget=forms.PasswordInput)'''
+class ChooseColorForm(forms.Form):
+    COLOR_CHOICES = [
+        ('R', 'Red'),
+        ('G', 'Green'),
+        ('B', 'Blue'),
+        ('Y', 'Yellow'),
+    ]
+    color = forms.ChoiceField(choices=COLOR_CHOICES, widget=forms.RadioSelect)

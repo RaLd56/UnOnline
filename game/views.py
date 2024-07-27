@@ -81,7 +81,8 @@ def play_card(request, room_name, card_id):
         return redirect('start_game')
     
     card = get_object_or_404(Card, id=card_id)
-    player_card = get_object_or_404(PlayerCard, player=request.user, card=card, room=room)
+    
+    player_card = PlayerCard.objects.filter(player=request.user, card=card, room=room).first()
 
     last_played_card = room.last_played_card
 
@@ -110,6 +111,44 @@ def play_card(request, room_name, card_id):
             return redirect('game_room', room_name=room_name)
     return redirect('game_room', room_name=room_name)
 
+def give_extra_cards(request, room, num):
+    all_cards = list(Card.objects.all())
+    random.shuffle(all_cards)
+    extra_cards = all_cards[:num]
+    for player in room.players.all():
+            if player != request.user:
+                next_player = player
+
+    for card in extra_cards:
+        PlayerCard.objects.create(player=next_player, card=card, room=room)
+
+def change_suit(room, suit):
+    room.last_played_card.suit == suit
+    room.save()
+
+
+def handle_special_card(request, room):
+    if room.last_played_card.type == 'W':
+        
+        pass
+    elif room.last_played_card.type == 'WD':
+        pass
+    elif room.last_played_card.type == 'S':
+        room.turn = request.user
+        room.save()
+        messages.success(request, f"One more turn for you, {request.user}")
+        pass
+    elif room.last_played_card.type == 'R':
+        room.turn = request.user
+        room.save()
+        messages.success(request, f"One more turn for you, {request.user}")
+        pass
+    elif room.last_played_card.type == 'D':
+        give_extra_cards(request, room, 2)
+        messages.success(request, f"Plus 2 cards for your opponent, {request.user}")
+        pass
+
+
 @login_required
 def get_extra_card(request, room_name):
     room = get_object_or_404(GameRoom, name=room_name)
@@ -127,22 +166,6 @@ def get_extra_card(request, room_name):
 
 
 
-def handle_special_card(request, room):
-    if room.last_played_card.type == 'wild':
-        pass
-    elif room.last_played_card.type == 'wild_draw_4':
-        pass
-    elif room.last_played_card.type == 'S':
-        room.turn = request.user
-        room.save()
-        messages.success(request, f"Skip card, {request.user}")
-        pass
-    elif room.last_played_card.type == 'R':
-        room.turn = request.user
-        room.save()
-        messages.success(request, f"Reverse card, {request.user}")
-        pass
-    elif room.last_played_card.type == 'draw_2':
-        pass
+
 
 
