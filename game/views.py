@@ -92,7 +92,7 @@ def play_card(request, room_name, card_id):
 
                 player_card.delete()
 
-                handle_special_card(room, card)
+                handle_special_card(request, room)
 
                 return redirect('game_room', room_name=room_name)
             else:
@@ -107,16 +107,22 @@ def play_card(request, room_name, card_id):
     return redirect('game_room', room_name=room_name)
 
 
-def handle_special_card(room, card):
-    if card.type == 'wild':
+def handle_special_card(request, room):
+    if room.last_played_card.type == 'wild':
         pass
-    elif card.type == 'wild_draw_4':
+    elif room.last_played_card.type == 'wild_draw_4':
         pass
-    elif card.type == 'skip':
+    elif room.last_played_card.type == 'S':
+        room.turn = request.user
+        room.save()
+        messages.success(request, f"Skip card, {request.user}")
         pass
-    elif card.type == 'reverse':
+    elif room.last_played_card.type == 'R':
+        room.turn = request.user
+        room.save()
+        messages.success(request, f"Reverse card, {request.user}")
         pass
-    elif card.type == 'draw_2':
+    elif room.last_played_card.type == 'draw_2':
         pass
 
 

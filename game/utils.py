@@ -17,17 +17,14 @@ def deal_cards(room):
             for card in hand_cards:
                 PlayerCard.objects.create(player=player, card=card, room=room)
 
-        initial_card_found = False
-        for player in players:
-            non_special_cards = room.player_cards.filter(player=player, card__suit__in=['R', 'G', 'B', 'Y'])
-            if non_special_cards.exists():
-                initial_card = random.choice(non_special_cards).card
-                room.last_played_card = initial_card
-                room.save()
-                room.player_cards.filter(player=player, card=initial_card).delete()
-                initial_card_found = True
-                break
+        non_special_cards = [card for card in all_cards if card.suit in ['R', 'G', 'B', 'Y']]
 
-        if initial_card_found:
-            room.turn = random.choice(players)
-            room.save()
+        initial_card = random.choice(non_special_cards)
+        room.last_played_card = initial_card
+        room.save()
+
+        room.turn = random.choice(players)
+        room.save()
+            
+        
+
