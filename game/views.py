@@ -5,6 +5,7 @@ from .forms import GameRoomForm, JoinRoomForm
 from .utils import deal_cards
 from django.http import HttpResponseForbidden
 from django.contrib import messages
+import random
 
 
 @login_required
@@ -31,7 +32,10 @@ def join_room(request):
             room_name = form.cleaned_data['room_name']
             room = get_object_or_404(GameRoom, name=room_name)
             if room.is_full:
-                return render(request, 'game/room_full.html')
+                    if request.user in room.players.all():
+                        return redirect('game_room', room_name=room.name)
+                    else:
+                        return render(request, 'game/room_full.html')
             room.add_player(request.user)
             if room.players.count() == 2:  # Начинаем игру, когда 2 игрока
                 deal_cards(room)
@@ -105,6 +109,22 @@ def play_card(request, room_name, card_id):
             handle_special_card(room, card)
             return redirect('game_room', room_name=room_name)
     return redirect('game_room', room_name=room_name)
+
+@login_required
+def get_extra_card(request, room_name):
+    room = get_object_or_404(GameRoom, name=room_name)
+    player = request.user
+
+    if player not in room.players.all():
+        return redirect('start_game')
+    
+    all_cards = list(Card.objects.all())
+    extra_card = random.choice(all_cards)
+
+    PlayerCard.objects.create(player=player, card=extra_card, room=room)
+    
+    return redirect('game_room', room_name=room_name)
+
 
 
 def handle_special_card(request, room):

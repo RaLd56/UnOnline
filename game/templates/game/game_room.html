@@ -35,6 +35,11 @@ Room: {{ room.name }}
         {% endif %}
     </div>
 
+    
+
+    
+    
+
     <div class="players">
         <div class="player">
         <h2>{{ user.username }}</h2>
@@ -53,6 +58,14 @@ Room: {{ room.name }}
             {% empty %}
                 <h4>No cards</h4>
             {% endfor %}
+            <div class="card">
+            <form method="POST" action="{% url 'get_extra_card' room_name=room.name %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-light">
+                    <img src="{% static 'main/img/card_deck.png' %}">
+                </button>
+            </form>
+        </div>
         </div>
     </div>
 </div>
