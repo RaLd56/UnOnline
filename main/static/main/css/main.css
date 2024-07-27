@@ -6,6 +6,19 @@ body {
 h1 {
     text-align: center;
 }
+h4{
+    text-align: center;
+}
+
+.suit-card{
+    border: none;
+    background: none;
+    margin-left: 12vh;
+    margin-top: -7vh;
+    margin-bottom: 10vh;
+    transform: scale(0.11);
+    height: 10vh
+}
 
 
 aside {
@@ -382,4 +395,3 @@ main .features{
 transform: scale(2);
 }
 
-  

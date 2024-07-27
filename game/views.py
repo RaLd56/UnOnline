@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import GameRoom, Card, PlayerCard
-from .forms import GameRoomForm, JoinRoomForm
+from .forms import GameRoomForm, JoinRoomForm, ChooseColorForm
 from .utils import deal_cards
 from django.http import HttpResponseForbidden
 from django.contrib import messages
@@ -77,39 +77,89 @@ def game_room(request, room_name):
 def play_card(request, room_name, card_id):
     room = get_object_or_404(GameRoom, name=room_name)
 
+
     if request.user not in room.players.all():
         return redirect('start_game')
-    
+
     card = get_object_or_404(Card, id=card_id)
-    
     player_card = PlayerCard.objects.filter(player=request.user, card=card, room=room).first()
 
     last_played_card = room.last_played_card
 
+    if room.chosen_suit:
+        room.chosen_suit = last_played_card.suit
+
+    
+
     if room.turn == request.user:
         if last_played_card:
-            if card.suit == last_played_card.suit or card.type == last_played_card.type or card.suit == 'S':
+            if card.suit == room.chosen_suit or card.suit == room.last_played_card.suit or card.type == last_played_card.type or card.suit == 'S':
                 room.last_played_card = card
-                for player in room.players.all():
-                    if player != request.user:
-                        room.turn = player
+                PlayerCard.objects.filter(player=request.user, card=card, room=room).first().delete()
                 room.save()
-
-                player_card.delete()
-
-                handle_special_card(request, room)
-
+                
+                if card.type == 'W' or card.type == 'WD':
+                    return redirect('choose_color', room_name=room_name)
+                    
+                handle_special_card(request, room, card)
+                next_turn = room.players.exclude(id=request.user.id).first()
+                room.turn = next_turn
+                room.save()
+                
                 return redirect('game_room', room_name=room_name)
             else:
                 messages.error(request, "You can't play this card.")
                 return redirect('game_room', room_name=room_name)
         else:
             room.last_played_card = card
-            room.save()
             player_card.delete()
-            handle_special_card(room, card)
+            room.save()
+
+            if card.type == 'W' or card.type == 'WD':
+                return redirect('choose_color', room_name=room_name)
+            
+            handle_special_card(request, room, card)
+            next_turn = room.players.exclude(id=request.user.id).first()
+            room.turn = next_turn
+            room.save()
+            
             return redirect('game_room', room_name=room_name)
-    return redirect('game_room', room_name=room_name)
+    else:
+        messages.error(request, "It's not your turn")
+        return redirect('game_room', room_name=room_name)
+    
+
+
+@login_required
+def choose_color(request, room_name):
+    room = get_object_or_404(GameRoom, name=room_name)
+    if room.last_played_card.type == 'WD':
+        give_extra_cards(request, room, 2)
+        messages.success(request, f"Plus 4 cards for your opponent, {request.user}")
+        
+
+        
+    if request.user != room.turn:
+        return HttpResponseForbidden()
+
+    if request.method == 'POST':
+        form = ChooseColorForm(request.POST)
+        if form.is_valid():
+            chosen_color = form.cleaned_data['color']
+            is_wild_draw = form.cleaned_data.get('wd', False)
+            room.chosen_suit = chosen_color
+            room.save()
+
+            next_turn = room.players.exclude(id=request.user.id).first()
+            room.turn = next_turn
+            room.save()
+
+            return redirect('game_room', room_name=room_name)
+    else:
+        form = ChooseColorForm()
+
+    return render(request, 'game/choose_color.html', {'form': form, 'room': room})
+
 
 def give_extra_cards(request, room, num):
     all_cards = list(Card.objects.all())
@@ -122,31 +172,33 @@ def give_extra_cards(request, room, num):
     for card in extra_cards:
         PlayerCard.objects.create(player=next_player, card=card, room=room)
 
-def change_suit(room, suit):
-    room.last_played_card.suit == suit
-    room.save()
 
+def handle_special_card(request, room, card=None):
+    if card is None:
+        card = room.last_played_card
 
-def handle_special_card(request, room):
-    if room.last_played_card.type == 'W':
-        
-        pass
-    elif room.last_played_card.type == 'WD':
-        pass
-    elif room.last_played_card.type == 'S':
+    if card.type == 'W':  # Wild Card
+        # Show the color selection form
+        return render(request, 'game/choose_color.html', {'form': ChooseColorForm(), 'room': room})
+
+    elif card.type == 'WD':  # Wild Draw Four
+        # Show the color selection form
+        return render(request, 'game/choose_color.html', {'form': ChooseColorForm(), 'room': room, 'wd': True})
+
+    elif card.type == 'S':
         room.turn = request.user
         room.save()
         messages.success(request, f"One more turn for you, {request.user}")
-        pass
-    elif room.last_played_card.type == 'R':
+
+    elif card.type == 'R':
         room.turn = request.user
         room.save()
         messages.success(request, f"One more turn for you, {request.user}")
-        pass
-    elif room.last_played_card.type == 'D':
+
+    elif card.type == 'D':
         give_extra_cards(request, room, 2)
         messages.success(request, f"Plus 2 cards for your opponent, {request.user}")
-        pass
+
 
 
 @login_required
