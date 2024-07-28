@@ -41,6 +41,8 @@ class GameRoom(models.Model):
     last_played_card = models.ForeignKey(Card, null=True, blank=True, on_delete=models.SET_NULL)
     turn = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='current_turn')
     chosen_suit = models.CharField(max_length=10, blank=True, null=True)
+    uno_declared = models.BooleanField(default=False)  
+
 
 
     def __str__(self):
