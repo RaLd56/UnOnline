@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-7_3b%d3z#k3t0zd=j0qlb#omrkda#7+)u*p2a@9suo(=)c2aos
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.1.134']
 
 
 # Application definition
@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'main',
     'users',
     'game',
+    'channels',
     'crispy_forms',
     'crispy_bootstrap4',
     'django.contrib.admin',
@@ -44,6 +45,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 ]
+
+ASGI_APPLICATION = 'djangoprac.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

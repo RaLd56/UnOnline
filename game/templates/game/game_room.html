@@ -75,3 +75,21 @@ Room: {{ room.name }}
     </div>
 </div>
 {% endblock %}
+
+<script>
+    const roomName = "{{ room.name }}";
+    const ws_scheme = window.location.protocol === "https:" ? "wss" : "ws";
+    const gameSocket = new WebSocket(
+        ws_scheme + '://' + window.location.host + '/ws/game/' + roomName + '/');
+
+    gameSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        if (data.message === 'update') {
+            location.reload();
+        }
+    };
+
+    gameSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+</script>

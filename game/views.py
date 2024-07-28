@@ -6,7 +6,8 @@ from .utils import deal_cards
 from django.http import HttpResponseForbidden
 from django.contrib import messages
 import random
-
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 
 @login_required
 def start_game(request):
@@ -32,10 +33,10 @@ def join_room(request):
             room_name = form.cleaned_data['room_name']
             room = get_object_or_404(GameRoom, name=room_name)
             if room.is_full:
-                    if request.user in room.players.all():
-                        return redirect('game_room', room_name=room.name)
-                    else:
-                        return render(request, 'game/room_full.html')
+                if request.user in room.players.all():
+                    return redirect('game_room', room_name=room.name)
+                else:
+                    return render(request, 'game/room_full.html')
             room.add_player(request.user)
             if room.players.count() == 2:  # Начинаем игру, когда 2 игрока
                 deal_cards(room)
@@ -77,7 +78,6 @@ def game_room(request, room_name):
 def play_card(request, room_name, card_id):
     room = get_object_or_404(GameRoom, name=room_name)
 
-
     if request.user not in room.players.all():
         return redirect('start_game')
 
@@ -85,8 +85,6 @@ def play_card(request, room_name, card_id):
     player_card = PlayerCard.objects.filter(player=request.user, card=card, room=room).first()
 
     last_played_card = room.last_played_card
-
-    
 
     if room.turn == request.user:
         if last_played_card:
@@ -106,8 +104,16 @@ def play_card(request, room_name, card_id):
                 room.save()
                     
                 handle_special_card(request, room, card)
-                
 
+                # Отправка сообщения через WebSocket о завершении хода
+                channel_layer = get_channel_layer()
+                async_to_sync(channel_layer.group_send)(
+                    f'game_{room_name}',
+                    {
+                        'type': 'game_message',
+                        'message': 'update'
+                    }
+                )
 
                 remaining_cards = room.player_cards.filter(player=request.user).count()
                 if remaining_cards == 0:
@@ -131,13 +137,10 @@ def play_card(request, room_name, card_id):
                 messages.error(request, "You can't play this card.")
                 return redirect('game_room', room_name=room_name)
         else:
-            
             return redirect('game_room', room_name=room_name)
     else:
         messages.error(request, "It's not your turn")
         return redirect('game_room', room_name=room_name)
-    
-
 
 @login_required
 def choose_color(request, room_name):
@@ -145,8 +148,6 @@ def choose_color(request, room_name):
     if room.last_played_card.type == 'WD':
         give_extra_cards(request, room, 2)
         messages.success(request, f"Plus 4 cards for your opponent, {request.user}")
-        
-
 
     if request.method == 'POST':
         form = ChooseColorForm(request.POST)
@@ -160,20 +161,29 @@ def choose_color(request, room_name):
             room.turn = next_turn
             room.save()
 
+            # Отправка сообщения через WebSocket о выборе цвета
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                f'game_{room_name}',
+                {
+                    'type': 'game_message',
+                    'message': 'update'
+                }
+            )
+
             return redirect('game_room', room_name=room_name)
     else:
         form = ChooseColorForm()
 
     return render(request, 'game/choose_color.html', {'form': form, 'room': room})
 
-
 def give_extra_cards(request, room, num):
     all_cards = list(Card.objects.all())
     random.shuffle(all_cards)
     extra_cards = all_cards[:num]
     for player in room.players.all():
-            if player != request.user:
-                next_player = player
+        if player != request.user:
+            next_player = player
 
     for card in extra_cards:
         PlayerCard.objects.create(player=next_player, card=card, room=room)
@@ -186,11 +196,9 @@ def uno(request, room_name):
     if player not in room.players.all():
         return redirect('start_game')
 
-    
     if room.turn != player:
         return redirect('game_room', room_name=room_name)
 
-    
     player_hand = room.player_cards.filter(player=player)
     card_count = player_hand.count()
 
@@ -202,12 +210,21 @@ def uno(request, room_name):
     room.uno_declared = True
     room.save()
 
+    # Отправка сообщения через WebSocket об объявлении "Uno"
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+        f'game_{room_name}',
+        {
+            'type': 'game_message',
+            'message': 'update'
+        }
+    )
+
     if card_count == 1:
         messages.success(request, "You have declared Uno! Play your last card to win.")
         return redirect('game_room', room_name=room_name)
 
     return redirect('game_room', room_name=room_name)
-
 
 def handle_special_card(request, room, card=None):
     if card is None:
@@ -223,19 +240,17 @@ def handle_special_card(request, room, card=None):
         room.turn = request.user
         room.save()
         messages.success(request, f"One more turn for you, {request.user}")
-        return redirect('game_room', room_name=room.name)
+        return redirect('game_room', room.name)
 
     elif card.type == 'R':
         room.turn = request.user
         room.save()
         messages.success(request, f"One more turn for you, {request.user}")
-        return redirect('game_room', room_name=room.name)
+        return redirect('game_room', room.name)
 
     elif card.type == 'D':
         give_extra_cards(request, room, 2)
         messages.success(request, f"Plus 2 cards for your opponent, {request.user}")
-
-
 
 @login_required
 def get_extra_card(request, room_name):
@@ -249,5 +264,15 @@ def get_extra_card(request, room_name):
     extra_card = random.choice(all_cards)
 
     PlayerCard.objects.create(player=player, card=extra_card, room=room)
+
+    # Отправка сообщения через WebSocket о получении дополнительной карты
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+        f'game_{room_name}',
+        {
+            'type': 'game_message',
+            'message': 'update'
+        }
+    )
     
     return redirect('game_room', room_name=room_name)
