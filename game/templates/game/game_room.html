@@ -74,22 +74,15 @@ Room: {{ room.name }}
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+    console.log("JavaScript загружен"); // Добавьте эту строку
+
+    setInterval(function(){
+        console.log("Перезагрузка страницы"); // Добавьте эту строку
+        location.reload();
+    }, 1000); // Время в миллисекундах (здесь 5000мс = 5 секунд)
+</script>
 {% endblock %}
 
-<script>
-    const roomName = "{{ room.name }}";
-    const wsScheme = window.location.protocol === "https:" ? "wss" : "ws";
-    const chatSocket = new WebSocket(
-        wsScheme + '://' + window.location.host + '/ws/game/' + roomName + '/');
-    
-    chatSocket.onmessage = function(e) {
-        const data = JSON.parse(e.data);
-        console.log(data);
-        location.reload();  // перезагрузить страницу при получении сообщения
-    };
-    
-    chatSocket.onclose = function(e) {
-        console.error('Chat socket closed unexpectedly');
-    };
-    </script>
-    
+
