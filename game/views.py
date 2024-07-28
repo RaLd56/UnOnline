@@ -202,7 +202,6 @@ def uno(request, room_name):
     room.uno_declared = True
     room.save()
 
-    # Проверка, если у игрока только одна карта
     if card_count == 1:
         messages.success(request, "You have declared Uno! Play your last card to win.")
         return redirect('game_room', room_name=room_name)
