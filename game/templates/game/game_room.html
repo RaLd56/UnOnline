@@ -78,18 +78,18 @@ Room: {{ room.name }}
 
 <script>
     const roomName = "{{ room.name }}";
-    const ws_scheme = window.location.protocol === "https:" ? "wss" : "ws";
-    const gameSocket = new WebSocket(
-        ws_scheme + '://' + window.location.host + '/ws/game/' + roomName + '/');
-
-    gameSocket.onmessage = function(e) {
+    const wsScheme = window.location.protocol === "https:" ? "wss" : "ws";
+    const chatSocket = new WebSocket(
+        wsScheme + '://' + window.location.host + '/ws/game/' + roomName + '/');
+    
+    chatSocket.onmessage = function(e) {
         const data = JSON.parse(e.data);
-        if (data.message === 'update') {
-            location.reload();
-        }
+        console.log(data);
+        location.reload();  // перезагрузить страницу при получении сообщения
     };
-
-    gameSocket.onclose = function(e) {
+    
+    chatSocket.onclose = function(e) {
         console.error('Chat socket closed unexpectedly');
     };
-</script>
+    </script>
+    

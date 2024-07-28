@@ -95,25 +95,15 @@ def play_card(request, room_name, card_id):
 
                 if room.chosen_suit:
                     room.chosen_suit = last_played_card.suit
-                
+
                 if card.type == 'W' or card.type == 'WD':
                     return redirect('choose_color', room_name=room_name)
-                
+
                 next_turn = room.players.exclude(id=request.user.id).first()
                 room.turn = next_turn
                 room.save()
-                    
-                handle_special_card(request, room, card)
 
-                # Отправка сообщения через WebSocket о завершении хода
-                channel_layer = get_channel_layer()
-                async_to_sync(channel_layer.group_send)(
-                    f'game_{room_name}',
-                    {
-                        'type': 'game_message',
-                        'message': 'update'
-                    }
-                )
+                handle_special_card(request, room, card)
 
                 remaining_cards = room.player_cards.filter(player=request.user).count()
                 if remaining_cards == 0:
@@ -131,8 +121,16 @@ def play_card(request, room_name, card_id):
                     room.uno_declared = False
                     room.save()
 
+                channel_layer = get_channel_layer()
+                async_to_sync(channel_layer.group_send)(
+                    f'game_{room_name}',
+                    {
+                        'type': 'game_message',
+                        'message': 'update'
+                    }
+                )
+
                 return redirect('game_room', room_name=room_name)
-                
             else:
                 messages.error(request, "You can't play this card.")
                 return redirect('game_room', room_name=room_name)
@@ -141,7 +139,6 @@ def play_card(request, room_name, card_id):
     else:
         messages.error(request, "It's not your turn")
         return redirect('game_room', room_name=room_name)
-
 @login_required
 def choose_color(request, room_name):
     room = get_object_or_404(GameRoom, name=room_name)
