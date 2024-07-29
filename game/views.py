@@ -234,23 +234,27 @@ def get_extra_card(request, room_name):
 
     return redirect('game_room', room_name=room_name)
 
+@login_required
 def update_room_data(request, room_name):
     room = get_object_or_404(GameRoom, name=room_name)
     player_info = [
         {
             'username': player.username,
-            'cards': list(PlayerCard.objects.filter(player=player, room=room).values('card__suit', 'card__type'))
+            'cards': list(PlayerCard.objects.filter(player=player, room=room).values('card__id', 'card__suit', 'card__type'))
         }
-        for player in room.players.all()
+        for player in room.players.exclude(id=request.user.id)
     ]
-    
+    current_player_hand = list(PlayerCard.objects.filter(player=request.user, room=room).values('card__id', 'card__suit', 'card__type'))
+
     data = {
         'player_info': player_info,
         'last_played_card': {
             'suit': room.last_played_card.suit,
             'type': room.last_played_card.type
         } if room.last_played_card else None,
-        'chosen_suit': room.chosen_suit
+        'chosen_suit': room.chosen_suit,
+        'current_player_hand': current_player_hand
     }
     
     return JsonResponse(data)
+
