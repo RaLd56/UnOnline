@@ -94,7 +94,7 @@ def play_card(request, room_name, card_id):
                 room.save()
 
                 if room.chosen_suit:
-                    room.chosen_suit = last_played_card.suit
+                    room.chosen_suit = None  
 
                 if card.type == 'W' or card.type == 'WD':
                     return redirect('choose_color', room_name=room_name)

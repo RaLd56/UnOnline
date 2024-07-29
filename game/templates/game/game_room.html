@@ -26,6 +26,11 @@ Room: {{ room.name }}
         {% endfor %}
     </div>
 
+    {% if room.chosen_suit %}
+    <div class="last-played-card">
+        <img src="{% static 'main/img/cards/'|add:room.chosen_suit|add:'_'|add:room.last_played_card.type|add:'.png' %}">
+    </div>
+    {% else %}
     <div class="last-played-card">
         {% if room.last_played_card %}
             <img src="{% static 'main/img/cards/'|add:room.last_played_card.suit|add:'_'|add:room.last_played_card.type|add:'.png' %}" alt="{{ room.last_played_card.suit }} {{ room.last_played_card.type }}">
@@ -33,11 +38,6 @@ Room: {{ room.name }}
             <h1>No cards played yet.</h1>
         {% endif %}
     </div>
-
-    {% if room.chosen_suit %}
-        <div>
-            <h4>Chosen Suit: {{ room.chosen_suit }}</h4>
-        </div>
     {% endif %}
 
     <div class="players">
