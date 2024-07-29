@@ -11,6 +11,7 @@ urlpatterns = [
     path('game/<str:room_name>/get_extra_card/', views.get_extra_card, name='get_extra_card'),
     path('room/<str:room_name>/choose_color/', views.choose_color, name='choose_color'),
     path('room/<str:room_name>/uno/', views.uno, name='uno'),
+    path('update-room-data/<str:room_name>/', views.update_room_data, name='update_room_data'),
 ]
 
 

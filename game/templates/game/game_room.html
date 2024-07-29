@@ -9,7 +9,7 @@ Room: {{ room.name }}
 <div class="container-room">
     <h1>Room: {{ room.name }}</h1>
 
-    <div class="players">
+    <div class="players" id="players-info">
         {% for info in player_info %}
             <div class="player">
                 <h2>{{ info.player.username }}</h2>
@@ -26,19 +26,21 @@ Room: {{ room.name }}
         {% endfor %}
     </div>
 
-    {% if room.chosen_suit %}
-    <div class="last-played-card">
-        <img src="{% static 'main/img/cards/'|add:room.chosen_suit|add:'_'|add:room.last_played_card.type|add:'.png' %}">
-    </div>
-    {% else %}
-    <div class="last-played-card">
-        {% if room.last_played_card %}
-            <img src="{% static 'main/img/cards/'|add:room.last_played_card.suit|add:'_'|add:room.last_played_card.type|add:'.png' %}" alt="{{ room.last_played_card.suit }} {{ room.last_played_card.type }}">
+    <div id="last-played-card">
+        {% if room.chosen_suit %}
+        <div class="last-played-card">
+            <img src="{% static 'main/img/cards/'|add:room.chosen_suit|add:'_'|add:room.last_played_card.type|add:'.png' %}">
+        </div>
         {% else %}
-            <h1>No cards played yet.</h1>
+        <div class="last-played-card">
+            {% if room.last_played_card %}
+                <img src="{% static 'main/img/cards/'|add:room.last_played_card.suit|add:'_'|add:room.last_played_card.type|add:'.png' %}" alt="{{ room.last_played_card.suit }} {{ room.last_played_card.type }}">
+            {% else %}
+                <h1>No cards played yet.</h1>
+            {% endif %}
+        </div>
         {% endif %}
     </div>
-    {% endif %}
 
     <div class="players">
         <div class="player">
@@ -75,13 +77,41 @@ Room: {{ room.name }}
     </div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script type="text/javascript">
+    function updateRoomData() {
+        $.ajax({
+            url: '{% url "update_room_data" room.name %}',
+            method: 'GET',
+            success: function(data) {
+                // Обновление player_info
+                $('#players-info').empty();
+                data.player_info.forEach(function(info) {
+                    if (info.username !== '{{ user.username }}') {
+                        var playerHtml = '<div class="player"><h2>' + info.username + '</h2><div class="cards">';
+                        if (info.cards.length > 0) {
+                            info.cards.forEach(function(card) {
+                                playerHtml += '<div class="card"><img src="{% static "main/img/cards/unknown_card.png" %}"></div>';
+                            });
+                        } else {
+                            playerHtml += '<p>No cards</p>';
+                        }
+                        playerHtml += '</div></div>';
+                        $('#players-info').append(playerHtml);
+                    }
+                });
 
-    setInterval(function(){
-        console.log("Перезагрузка страницы");
-        location.reload();
-    }, 1000); 
+                // Обновление last_played_card
+                if (data.last_played_card) {
+                    var cardImageSrc = '{% static "main/img/cards/" %}' + (data.chosen_suit || data.last_played_card.suit) + '_' + data.last_played_card.type + '.png';
+                    $('#last-played-card').html('<div class="last-played-card"><img src="' + cardImageSrc + '"></div>');
+                } else {
+                    $('#last-played-card').html('<div class="last-played-card"><h1>No cards played yet.</h1></div>');
+                }
+            }
+        });
+    }
+
+    setInterval(updateRoomData, 1000);
 </script>
 {% endblock %}
-
-

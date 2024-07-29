@@ -1,25 +1,21 @@
 body {
     background: #F5F5F5;
-    color: #00FFFF;
+    color: #424242;
 }
 
-h1 {
-    text-align: center;
-}
-h4{
+h1, h4 {
     text-align: center;
 }
 
-.suit-card{
+.suit-card {
     border: none;
     background: none;
     margin-left: 12vh;
     margin-top: -7vh;
     margin-bottom: 10vh;
     transform: scale(0.11);
-    height: 10vh
+    height: 10vh;
 }
-
 
 aside {
     float: left;
@@ -27,11 +23,11 @@ aside {
     width: 15%;
     padding: 2.5%;
     height: 100vh;
-    color:azure;
+    color: azure;
     border-right: 5px solid #4d4d4d;
 }
 
-aside a{
+aside a {
     text-decoration: none;
 }
 
@@ -39,10 +35,13 @@ aside a{
     width: 100%;
     height: auto;
     display: block; 
-  }
+}
 
-aside ul {list-style: none}
-aside ul li{
+aside ul {
+    list-style: none;
+}
+
+aside ul li {
     color: azure;
     display: block;
     text-align: center;
@@ -50,13 +49,14 @@ aside ul li{
     margin-left: -5.5vh;
     transition: transform .2s ease;
 }
-aside ul li:hover, aside ul a:hover{
+
+aside ul li:hover, aside ul a:hover {
     color: #a3e392;
     text-decoration: none;
     transform: scale(1.04);
 }
 
-main .features{
+main .features {
     text-align: center;
     max-width: 800px;
     margin: auto;
@@ -67,14 +67,13 @@ main .features{
 }
 
 .half-width {
-    width: 50%; 
-    margin: 0 auto; 
+    width: 50%;
+    margin: 0 auto;
     padding: 10px;
     box-sizing: border-box; 
-  }
-  
-  
-  .alert {
+}
+
+.alert {
     background-color: #f8d7da;
     border: 1px solid #f5c6cb;
     border-radius: 4px;
@@ -82,9 +81,9 @@ main .features{
     margin-bottom: 10px;
     padding: 15px;
     text-align: center;
-  }
+}
 
-  .button {
+.button {
     display: inline-block;
     padding: 10px 20px;
     font-size: 16px;
@@ -103,10 +102,12 @@ main .features{
     background-color: #00b3ad;
     transform: translateY(-2px);
 }
+
 .button-group {
     flex-direction: column;
     gap: 10px;
 }
+
 .registration-container {
     background-color: white;
     padding: 20px;
@@ -142,10 +143,11 @@ main .features{
     font-size: 14px;
 }
 
-.about h1{
+.about h1 {
     text-align: center;
     color: #F5F5F5;
 }
+
 .container_about {
     max-width: 800px;
     margin: auto;
@@ -177,7 +179,7 @@ main .features{
     flex: 1;
 }
 
-.media-body h2{
+.media-body h2 {
     text-align: center;
 }
 
@@ -193,7 +195,7 @@ main .features{
     margin-left: 10vh;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border: 2px solid #eeeeee; /* Добавление рамки вокруг профиля */
+    border: 2px solid #eeeeee; 
 }
 
 .profile-header {
@@ -242,7 +244,6 @@ main .features{
     line-height: 1.6;
 }
 
-
 @media (max-width: 600px) {
     .content-section {
         padding: 15px;
@@ -263,6 +264,27 @@ main .features{
     .account-heading {
         font-size: 1.5em;
     }
+
+    aside {
+        width: 100%;
+        float: none;
+        height: auto;
+        border-right: none;
+        border-bottom: 5px solid #4d4d4d;
+    }
+
+    aside ul li {
+        margin-left: 0;
+    }
+
+    .suit-card {
+        margin-left: 0;
+        transform: scale(0.3);
+    }
+
+    .content-section {
+        margin-left: 0;
+    }
 }
 
 .logout {
@@ -281,13 +303,12 @@ main .features{
     padding: 20px;
 }
 
-.container-start{
+.container-start {
     max-width: 600px;
     margin: auto;
     padding: 20px;
 }
 
-/* styles.css */
 .container-room {
     max-width: 800px;
     margin: 0 auto;
@@ -303,7 +324,7 @@ main .features{
     margin-bottom: 20px;
 }
 
-.container-room p{
+.container-room p {
     text-align: center;
     color: #333;
     margin-bottom: 20px;
@@ -358,40 +379,33 @@ main .features{
     color: #777;
 }
 
-
 .card-button {
     border: none;
     background: none;
     padding: 0;
     margin: 0;
 }
-.container-room {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #f8f9fa;
-    border-radius: 10px;
-}
 
-.last-played-card{
+.last-played-card {
     border: none;
     background: none;
     margin-left: 12vh;
     margin-top: -7vh;
     margin-bottom: 10vh;
     transform: scale(0.3);
-    height: 25vh
+    height: 25vh;
 }
-.last-played-card h1{
+
+.last-played-card h1 {
     text-align: center;
     margin-right: 40vh;
 }
 
-.player-button{
+.player-button {
     height: 10vh;
     width: auto;
 }
-.player-button img{
-transform: scale(2);
-}
 
+.player-button img {
+    transform: scale(2);
+}

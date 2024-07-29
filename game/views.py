@@ -3,11 +3,9 @@ from django.contrib.auth.decorators import login_required
 from .models import GameRoom, Card, PlayerCard
 from .forms import GameRoomForm, JoinRoomForm, ChooseColorForm
 from .utils import deal_cards
-from django.http import HttpResponseForbidden
+from django.http import JsonResponse
 from django.contrib import messages
 import random
-from asgiref.sync import async_to_sync
-from channels.layers import get_channel_layer
 
 @login_required
 def start_game(request):
@@ -121,15 +119,6 @@ def play_card(request, room_name, card_id):
                     room.uno_declared = False
                     room.save()
 
-                channel_layer = get_channel_layer()
-                async_to_sync(channel_layer.group_send)(
-                    f'game_{room_name}',
-                    {
-                        'type': 'game_message',
-                        'message': 'update'
-                    }
-                )
-
                 return redirect('game_room', room_name=room_name)
             else:
                 messages.error(request, "You can't play this card.")
@@ -157,16 +146,6 @@ def choose_color(request, room_name):
             next_turn = room.players.exclude(id=request.user.id).first()
             room.turn = next_turn
             room.save()
-
-            # Отправка сообщения через WebSocket о выборе цвета
-            channel_layer = get_channel_layer()
-            async_to_sync(channel_layer.group_send)(
-                f'game_{room_name}',
-                {
-                    'type': 'game_message',
-                    'message': 'update'
-                }
-            )
 
             return redirect('game_room', room_name=room_name)
     else:
@@ -207,15 +186,6 @@ def uno(request, room_name):
     room.uno_declared = True
     room.save()
 
-    # Отправка сообщения через WebSocket об объявлении "Uno"
-    channel_layer = get_channel_layer()
-    async_to_sync(channel_layer.group_send)(
-        f'game_{room_name}',
-        {
-            'type': 'game_message',
-            'message': 'update'
-        }
-    )
 
     if card_count == 1:
         messages.success(request, "You have declared Uno! Play your last card to win.")
@@ -262,14 +232,25 @@ def get_extra_card(request, room_name):
 
     PlayerCard.objects.create(player=player, card=extra_card, room=room)
 
-    # Отправка сообщения через WebSocket о получении дополнительной карты
-    channel_layer = get_channel_layer()
-    async_to_sync(channel_layer.group_send)(
-        f'game_{room_name}',
-        {
-            'type': 'game_message',
-            'message': 'update'
-        }
-    )
-    
     return redirect('game_room', room_name=room_name)
+
+def update_room_data(request, room_name):
+    room = get_object_or_404(GameRoom, name=room_name)
+    player_info = [
+        {
+            'username': player.username,
+            'cards': list(PlayerCard.objects.filter(player=player, room=room).values('card__suit', 'card__type'))
+        }
+        for player in room.players.all()
+    ]
+    
+    data = {
+        'player_info': player_info,
+        'last_played_card': {
+            'suit': room.last_played_card.suit,
+            'type': room.last_played_card.type
+        } if room.last_played_card else None,
+        'chosen_suit': room.chosen_suit
+    }
+    
+    return JsonResponse(data)
